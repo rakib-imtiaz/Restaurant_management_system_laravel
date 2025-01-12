@@ -1,100 +1,136 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
+<nav class="bg-white border-b border-gray-200">
+    <!-- Top Bar -->
+    <div class="bg-[#1A1A1A] text-white py-2 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span>
+                    <i class="fas fa-phone-alt mr-2"></i>
+                    +1 (234) 567-8900
+                </span>
+                <span>
+                    <i class="fas fa-clock mr-2"></i>
+                    Mon - Sun: 11:00 - 23:00
+                </span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="hover:text-[#C8A97E]">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="hover:text-[#C8A97E]">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="hover:text-[#C8A97E]">
+                    <i class="fab fa-tripadvisor"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
+        <div class="flex justify-between h-24">
+            <!-- Logo and Primary Nav -->
+            <div class="flex items-center">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="{{ route('home') }}" class="flex flex-col items-center">
+                        <span class="text-3xl font-serif text-[#1A1A1A]">TRATTORIA</span>
+                        <span class="text-sm uppercase tracking-[0.3em] text-[#C8A97E]">EST. 1990</span>
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                <!-- Primary Navigation -->
+                <div class="hidden lg:flex lg:items-center lg:ml-16 space-x-8">
+                    <a href="{{ route('home') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Home
+                    </a>
+                    <a href="{{ route('menu') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Menu
+                    </a>
+                    <a href="{{ route('story') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Our Story
+                    </a>
+                    <a href="{{ route('events') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Events
+                    </a>
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+            <!-- Secondary Navigation -->
+            <div class="hidden lg:flex lg:items-center space-x-6">
+                <a href="{{ route('reservations') }}"
+                    class="bg-[#C8A97E] text-white hover:bg-[#B69A71] px-6 py-3 font-serif uppercase tracking-wide text-sm border border-[#C8A97E] transition duration-300">
+                    Reserve a Table
+                </a>
 
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
+                @auth
+                <div class="ml-3 relative" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open"
+                        class="flex items-center text-gray-800 hover:text-[#C8A97E] font-serif uppercase tracking-wide text-sm">
+                        <span class="mr-2">{{ Auth::user()->name }}</span>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
+                    <div x-show="open"
+                        class="absolute right-0 mt-2 w-48 rounded-none border border-gray-200 bg-white shadow-lg"
+                        style="display: none;">
+                        <div class="py-1">
+                            @if(Auth::user()->is_admin)
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="block px-4 py-2 text-sm font-serif uppercase text-gray-700 hover:bg-gray-50 hover:text-[#C8A97E]">
+                                Admin Dashboard
+                            </a>
+                            @endif
 
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
+                            <a href="{{ route('profile.edit') }}"
+                                class="block px-4 py-2 text-sm font-serif uppercase text-gray-700 hover:bg-gray-50 hover:text-[#C8A97E]">
+                                Profile
+                            </a>
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="block w-full text-left px-4 py-2 text-sm font-serif uppercase text-gray-700 hover:bg-gray-50 hover:text-[#C8A97E]">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <a href="{{ route('login') }}"
+                    class="text-gray-800 hover:text-[#C8A97E] font-serif uppercase tracking-wide text-sm">
+                    Login
+                </a>
+                <span class="text-gray-300">|</span>
+                <a href="{{ route('register') }}"
+                    class="text-gray-800 hover:text-[#C8A97E] font-serif uppercase tracking-wide text-sm">
+                    Register
+                </a>
+                @endauth
             </div>
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <!-- Mobile menu button -->
+            <div class="flex items-center lg:hidden">
+                <button type="button"
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                    @click="open = !open">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
             </div>
         </div>
     </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
-    </div>
 </nav>
+
+<!-- Add Font Awesome in your app.blade.php head section -->
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+@endpush

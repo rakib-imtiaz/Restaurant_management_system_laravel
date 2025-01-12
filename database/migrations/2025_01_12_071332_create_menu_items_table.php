@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('menu_items', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('price', 10);
+            $table->unsignedBigInteger('category_id')->index('menu_items_category_id_foreign');
+            $table->boolean('is_available')->default(true);
             $table->timestamps();
         });
     }
