@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
+        'phone',
+        'email_notifications',
+        'sms_notifications',
     ];
 
     /**
@@ -38,11 +43,29 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_admin' => 'boolean',
+        'email_notifications' => 'boolean',
+        'sms_notifications' => 'boolean',
+    ];
+
+    // Relationship with reservations
+    public function reservations()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Reservation::class);
+    }
+
+    // Relationship with reservation notifications
+    public function reservationNotifications()
+    {
+        return $this->hasMany(ReservationNotification::class)->latest();
+    }
+
+    // Get unread notifications count
+    public function getUnreadNotificationsCountAttribute()
+    {
+        return $this->reservationNotifications()->where('read', false)->count();
     }
 }

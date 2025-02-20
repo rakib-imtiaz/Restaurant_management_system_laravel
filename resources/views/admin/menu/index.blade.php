@@ -1,110 +1,93 @@
-@extends('layouts.admin')
-
-@section('title', 'Manage Menu Items')
+@extends('layouts.app')
 
 @section('content')
-<div class="mb-6 flex justify-between items-center">
-    <h2 class="text-2xl font-semibold">Menu Items</h2>
-    <button onclick="document.getElementById('addMenuModal').classList.remove('hidden')"
-        class="bg-gold text-white px-4 py-2 rounded hover:bg-opacity-90">
-        Add New Item
-    </button>
-</div>
-
-<!-- Menu Items Table -->
-<div class="bg-white rounded-lg shadow">
-    <table class="min-w-full">
-        <thead>
-            <tr class="border-b">
-                <th class="px-6 py-3 text-left">Name</th>
-                <th class="px-6 py-3 text-left">Category</th>
-                <th class="px-6 py-3 text-left">Price</th>
-                <th class="px-6 py-3 text-left">Status</th>
-                <th class="px-6 py-3 text-left">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($menuItems as $item)
-            <tr class="border-b hover:bg-gray-50">
-                <td class="px-6 py-4">
-                    <div>{{ $item->name }}</div>
-                    <div class="text-sm text-gray-600">{{ Str::limit($item->description, 50) }}</div>
-                </td>
-                <td class="px-6 py-4">{{ $item->category->name }}</td>
-                <td class="px-6 py-4">€{{ number_format($item->price, 2) }}</td>
-                <td class="px-6 py-4">
-                    <span class="px-2 py-1 rounded-full text-sm {{ $item->is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                        {{ $item->is_available ? 'Available' : 'Unavailable' }}
-                    </span>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex space-x-3">
-                        <button onclick="editMenuItem({{ $item->id }})"
-                            class="text-blue-600 hover:text-blue-900">Edit</button>
-                        <form action="{{ route('admin.menu.destroy', $item) }}" method="POST"
-                            onsubmit="return confirm('Are you sure you want to delete this item?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-
-<!-- Add Menu Item Modal -->
-<div id="addMenuModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+<div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
-                <h3 class="text-xl font-semibold mb-4">Add New Menu Item</h3>
-                <form action="{{ route('admin.menu.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Name</label>
-                            <input type="text" name="name" required
-                                class="w-full border rounded px-3 py-2">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Category</label>
-                            <select name="category_id" required class="w-full border rounded px-3 py-2">
-                                @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Price</label>
-                            <input type="number" step="0.01" name="price" required
-                                class="w-full border rounded px-3 py-2">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Description</label>
-                            <textarea name="description" rows="3"
-                                class="w-full border rounded px-3 py-2"></textarea>
-                        </div>
-
-                        <div class="flex items-center">
-                            <input type="checkbox" name="is_available" id="is_available" checked>
-                            <label for="is_available" class="ml-2">Available</label>
-                        </div>
+                <!-- Header Section -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Menu Management</h2>
+                        <p class="mt-1 text-sm text-gray-600">Manage your restaurant's menu items</p>
                     </div>
+                    <a href="{{ route('admin.menu.create') }}" class="bg-[#C8A97E] text-white px-4 py-2 rounded-md hover:bg-[#B69A71] transition-colors">
+                        Add New Menu Item
+                    </a>
+                </div>
 
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button type="button"
-                            onclick="document.getElementById('addMenuModal').classList.add('hidden')"
-                            class="px-4 py-2 border rounded">Cancel</button>
-                        <button type="submit"
-                            class="px-4 py-2 bg-gold text-white rounded">Save</button>
-                    </div>
-                </form>
+                <!-- Menu Items Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Availability</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($menuItems as $menuItem)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($menuItem->image)
+                                    <img src="{{ asset('storage/' . $menuItem->image) }}" alt="{{ $menuItem->name }}" class="h-12 w-12 object-cover rounded">
+                                    @else
+                                    <div class="h-12 w-12 bg-gray-200 flex items-center justify-center text-gray-500 rounded">N/A</div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ $menuItem->name }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        @if($menuItem->category)
+                                        {{ $menuItem->category->name }}
+                                        @else
+                                        -
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">${{ number_format($menuItem->price, 2) }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full @if($menuItem->is_available) bg-green-100 text-green-800 @else bg-red-100 text-red-800 @endif">
+                                        {{ $menuItem->is_available ? 'Available' : 'Unavailable' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-3">
+                                        <a href="{{ route('admin.menu.edit', ['menuItem' => $menuItem->id]) }}" class="text-[#C8A97E] hover:text-[#B69A71]">Edit</a>
+                                        <form action="{{ route('admin.menu.destroy', ['menuItem' => $menuItem->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this menu item?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                    No menu items found. Click "Add New Menu Item" to create one.
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination, if applicable -->
+                @if($menuItems->hasPages())
+                <div class="mt-4">
+                    {{ $menuItems->links() }}
+                </div>
+                @endif
+
             </div>
         </div>
     </div>

@@ -3,10 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Table extends Model
 {
-    protected $fillable = ['table_number', 'capacity', 'is_available'];
+    protected $fillable = [
+        'table_number',
+        'capacity',
+        'status',
+        'location',
+        'description'
+    ];
+
+    protected $casts = [
+        'capacity' => 'integer',
+    ];
 
     public function currentReservation()
     {
@@ -16,7 +27,7 @@ class Table extends Model
             ->orderBy('reservation_time');
     }
 
-    public function reservations()
+    public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }
@@ -24,5 +35,17 @@ class Table extends Model
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function isAvailable($dateTime): bool
+    {
+        if ($this->status === 'maintenance') {
+            return false;
+        }
+
+        return !$this->reservations()
+            ->where('status', '!=', 'cancelled')
+            ->where('reservation_date', $dateTime)
+            ->exists();
     }
 }

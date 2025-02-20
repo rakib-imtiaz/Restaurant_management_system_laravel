@@ -41,6 +41,26 @@
 
                 <!-- Primary Navigation -->
                 <div class="hidden lg:flex lg:items-center lg:ml-16 space-x-8">
+                    @if(request()->is('admin*'))
+                    <!-- Admin Navigation -->
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('admin.tables.index') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Tables
+                    </a>
+                    <a href="{{ route('admin.menu.index') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Menu
+                    </a>
+                    <a href="{{ route('admin.reservations.index') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
+                        Reservations
+                    </a>
+                    @else
+                    <!-- Public Navigation -->
                     <a href="{{ route('home') }}"
                         class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
                         Home
@@ -57,15 +77,18 @@
                         class="text-gray-800 hover:text-[#C8A97E] px-3 py-2 font-serif uppercase tracking-wide text-sm">
                         Events
                     </a>
+                    @endif
                 </div>
             </div>
 
             <!-- Secondary Navigation -->
             <div class="hidden lg:flex lg:items-center space-x-6">
-                <a href="{{ route('reservations') }}"
+                @if(!request()->is('admin*') && !Auth::user()?->is_admin)
+                <a href="{{ route('reservations.create') }}"
                     class="bg-[#C8A97E] text-white hover:bg-[#B69A71] px-6 py-3 font-serif uppercase tracking-wide text-sm border border-[#C8A97E] transition duration-300">
                     Reserve a Table
                 </a>
+                @endif
 
                 @auth
                 <div class="ml-3 relative" x-data="{ open: false }" @click.away="open = false">
@@ -78,19 +101,36 @@
                     </button>
 
                     <div x-show="open"
-                        class="absolute right-0 mt-2 w-48 rounded-none border border-gray-200 bg-white shadow-lg"
+                        class="absolute right-0 mt-2 w-48 rounded-none border border-gray-200 bg-white shadow-lg z-50"
                         style="display: none;">
                         <div class="py-1">
                             @if(Auth::user()->is_admin)
+                            @if(!request()->is('admin*'))
                             <a href="{{ route('admin.dashboard') }}"
                                 class="block px-4 py-2 text-sm font-serif uppercase text-gray-700 hover:bg-gray-50 hover:text-[#C8A97E]">
                                 Admin Dashboard
                             </a>
+                            @else
+                            <a href="{{ route('home') }}"
+                                class="block px-4 py-2 text-sm font-serif uppercase text-gray-700 hover:bg-gray-50 hover:text-[#C8A97E]">
+                                View Website
+                            </a>
+                            @endif
                             @endif
 
                             <a href="{{ route('profile.edit') }}"
                                 class="block px-4 py-2 text-sm font-serif uppercase text-gray-700 hover:bg-gray-50 hover:text-[#C8A97E]">
                                 Profile
+                            </a>
+
+                            <a href="{{ route('profile.notifications') }}"
+                                class="block px-4 py-2 text-sm font-serif uppercase text-gray-700 hover:bg-gray-50 hover:text-[#C8A97E] relative">
+                                Notifications
+                                @if(Auth::user()->unread_notifications_count > 0)
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                    {{ Auth::user()->unread_notifications_count }}
+                                </span>
+                                @endif
                             </a>
 
                             <form method="POST" action="{{ route('logout') }}">
@@ -104,15 +144,17 @@
                     </div>
                 </div>
                 @else
-                <a href="{{ route('login') }}"
-                    class="text-gray-800 hover:text-[#C8A97E] font-serif uppercase tracking-wide text-sm">
-                    Login
-                </a>
-                <span class="text-gray-300">|</span>
-                <a href="{{ route('register') }}"
-                    class="text-gray-800 hover:text-[#C8A97E] font-serif uppercase tracking-wide text-sm">
-                    Register
-                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('login') }}"
+                        class="text-gray-800 hover:text-[#C8A97E] font-serif uppercase tracking-wide text-sm">
+                        Customer Login
+                    </a>
+                    <span class="text-gray-300">|</span>
+                    <a href="{{ route('login') }}?admin=1"
+                        class="text-gray-800 hover:text-[#C8A97E] font-serif uppercase tracking-wide text-sm">
+                        Admin Login
+                    </a>
+                </div>
                 @endauth
             </div>
 

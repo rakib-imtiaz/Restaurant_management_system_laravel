@@ -11,7 +11,7 @@
     <div class="relative flex flex-col items-center justify-center h-full text-white text-center px-4">
         <h1 class="text-4xl md:text-6xl font-serif mb-4">TRATTORIA</h1>
         <p class="text-xl md:text-2xl mb-8 font-serif tracking-wider">AUTHENTIC ITALIAN CUISINE</p>
-        <a href="{{ route('reservations') }}"
+        <a href="{{ route('reservations.create') }}"
             class="bg-[#C8A97E] text-white px-8 py-3 font-serif uppercase tracking-wider hover:bg-[#B69A71] transition duration-300">
             Reserve a Table
         </a>
@@ -106,7 +106,7 @@
             Join us for an unforgettable dining experience. Reserve your table today and
             let us take you on a culinary journey through Italy.
         </p>
-        <a href="{{ route('reservations') }}"
+        <a href="{{ route('reservations.create') }}"
             class="inline-block bg-[#C8A97E] text-white px-8 py-3 font-serif uppercase tracking-wider hover:bg-[#B69A71] transition duration-300">
             Book a Table
         </a>

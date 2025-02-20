@@ -164,12 +164,11 @@
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         <h2 class="text-3xl font-serif mb-6">Plan Your Event</h2>
         <p class="text-gray-300 mb-8 max-w-2xl mx-auto font-serif">
-            Contact our events team to start planning your perfect occasion. We'll help you create
-            an unforgettable experience tailored to your needs.
+            Contact our events team to start planning your perfect occasion.
         </p>
-        <a href="mailto:events@restaurant.com"
+        <a href="{{ route('reservations.create') }}"
             class="inline-block bg-[#C8A97E] text-white px-8 py-3 font-serif uppercase tracking-wider hover:bg-[#B69A71] transition duration-300">
-            Contact Events Team
+            Make a Reservation
         </a>
     </div>
 </section>

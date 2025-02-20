@@ -20,7 +20,7 @@ Create, track, and manage customer orders
 High
 Billing
 Generate bills, process payments, and track transactions
-High
+High                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 Staff Management
 Basic employee scheduling and role assignment
 High

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\ReservationNotification;
 
 class ProfileController extends Controller
 {
@@ -56,5 +57,26 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function notifications(Request $request): View
+    {
+        $notifications = $request->user()
+            ->reservationNotifications()
+            ->with('reservation')
+            ->paginate(10);
+
+        return view('profile.notifications', compact('notifications'));
+    }
+
+    public function markNotificationAsRead(Request $request, ReservationNotification $notification): RedirectResponse
+    {
+        if ($notification->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $notification->markAsRead();
+
+        return back()->with('status', 'notification-marked-as-read');
     }
 }

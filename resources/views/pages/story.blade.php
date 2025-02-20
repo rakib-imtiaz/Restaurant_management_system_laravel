@@ -125,7 +125,7 @@
             Join us for an unforgettable dining experience where every dish tells a story of tradition,
             passion, and excellence.
         </p>
-        <a href="{{ route('reservations') }}"
+        <a href="{{ route('reservations.create') }}"
             class="inline-block bg-[#C8A97E] text-white px-8 py-3 font-serif uppercase tracking-wider hover:bg-[#B69A71] transition duration-300">
             Make a Reservation
         </a>

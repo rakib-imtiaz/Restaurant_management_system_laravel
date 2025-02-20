@@ -14,20 +14,24 @@ class TableController extends Controller
         return view('admin.tables.index', compact('tables'));
     }
 
+    public function create()
+    {
+        return view('admin.tables.create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'table_number' => 'required|integer|unique:tables,table_number',
+            'table_number' => 'required|string|unique:tables',
             'capacity' => 'required|integer|min:1',
-            'is_available' => 'boolean'
+            'location' => 'nullable|string',
+            'description' => 'nullable|string'
         ]);
-
-        $validated['is_available'] = $request->has('is_available');
 
         Table::create($validated);
 
         return redirect()->route('admin.tables.index')
-            ->with('success', 'Table created successfully');
+            ->with('success', 'Table created successfully.');
     }
 
     public function edit(Table $table)
@@ -38,30 +42,40 @@ class TableController extends Controller
     public function update(Request $request, Table $table)
     {
         $validated = $request->validate([
-            'table_number' => 'required|integer|unique:tables,table_number,' . $table->id,
+            'table_number' => 'required|string|unique:tables,table_number,' . $table->id,
             'capacity' => 'required|integer|min:1',
-            'is_available' => 'boolean'
+            'status' => 'required|in:available,occupied,reserved,maintenance',
+            'location' => 'nullable|string',
+            'description' => 'nullable|string'
         ]);
-
-        $validated['is_available'] = $request->has('is_available');
 
         $table->update($validated);
 
         return redirect()->route('admin.tables.index')
-            ->with('success', 'Table updated successfully');
+            ->with('success', 'Table updated successfully.');
     }
 
     public function destroy(Table $table)
     {
-        // Check if table has any active reservations
-        if ($table->reservations()->where('status', 'confirmed')->exists()) {
-            return back()->with('error', 'Cannot delete table with active reservations');
+        if ($table->reservations()->where('status', '!=', 'cancelled')->exists()) {
+            return back()->with('error', 'Cannot delete table with active reservations.');
         }
 
         $table->delete();
 
         return redirect()->route('admin.tables.index')
-            ->with('success', 'Table deleted successfully');
+            ->with('success', 'Table deleted successfully.');
+    }
+
+    public function updateStatus(Request $request, Table $table)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:available,occupied,reserved,maintenance'
+        ]);
+
+        $table->update($validated);
+
+        return response()->json(['message' => 'Table status updated successfully.']);
     }
 
     public function layout()

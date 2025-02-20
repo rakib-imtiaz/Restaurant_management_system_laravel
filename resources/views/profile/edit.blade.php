@@ -1,29 +1,99 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('content')
+<div class="py-12">
+    <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <h2 class="text-xl font-medium text-gray-900 mb-6">Profile Settings</h2>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+            <!-- Basic Information -->
+            <form method="post" action="{{ route('profile.update') }}" class="space-y-4">
+                @csrf
+                @method('patch')
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#C8A97E] focus:ring-[#C8A97E]">
+                    @error('name')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#C8A97E] focus:ring-[#C8A97E]">
+                    @error('email')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#C8A97E] focus:ring-[#C8A97E]">
+                    @error('phone')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 bg-[#C8A97E] border border-transparent rounded-md font-medium text-white hover:bg-[#B69A71] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C8A97E]">
+                        Save Changes
+                    </button>
+
+                    @if (session('status') === 'profile-updated')
+                    <span class="ml-3 text-sm text-gray-600">Saved successfully</span>
+                    @endif
+                </div>
+            </form>
+
+            <!-- Password Update -->
+            <div class="mt-10 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Update Password</h3>
+                <form method="post" action="{{ route('password.update') }}" class="space-y-4">
+                    @csrf
+                    @method('put')
+
+                    <div>
+                        <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
+                        <input type="password" name="current_password" id="current_password" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#C8A97E] focus:ring-[#C8A97E]">
+                        @error('current_password')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">New Password</label>
+                        <input type="password" name="password" id="password" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#C8A97E] focus:ring-[#C8A97E]">
+                        @error('password')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#C8A97E] focus:ring-[#C8A97E]">
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-[#C8A97E] border border-transparent rounded-md font-medium text-white hover:bg-[#B69A71] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C8A97E]">
+                            Update Password
+                        </button>
+
+                        @if (session('status') === 'password-updated')
+                        <span class="ml-3 text-sm text-gray-600">Password updated</span>
+                        @endif
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection
